@@ -60,6 +60,38 @@
 
 <script>
 
+  function playSound(e) {
+    
+    //select an audio element for a corresponding key press
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    //select a key element for a corresponding key press
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+    if(!audio) return; //stop the function from running to stop nulls
+
+    //have to rewind audio to start after each key press so that 
+    //multiple key presses cut off sound and start if over
+    audio.currentTime = 0; //rewind to start of sound
+    audio.play();
+    
+    //we also want the key to be animated when pressed
+    key.classList.add('playing');
+  }
+
+  //to turn off the box we need to listen to each key for when the transition
+  //(set in CSS) ends to set the CSS class back
+  
+  function removeTransition(e) {
+    if(e.propertyName !== 'transform') return; //skip it if not a transform
+    //the transform property will only show at the end of the transition
+    //so as soon as we see it we can remove it
+    this.classList.remove('playing');
+  }
+  
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  window.addEventListener('keydown', playSound);
+
+
 </script>
 
 
